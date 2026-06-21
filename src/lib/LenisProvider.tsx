@@ -1,21 +1,23 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface LenisProviderProps {
   children: ReactNode;
 }
 
 export default function LenisProvider({ children }: LenisProviderProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let lenisInstance: any = null;
+    let lenisInstance: { destroy: () => void } | null = null;
 
-    async function init() {
+    async function initLenis() {
       const Lenis = (await import("lenis")).default;
-      lenisInstance = new Lenis({
+
+      const instance = new Lenis({
         duration: 1.2,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         orientation: "vertical",
@@ -25,20 +27,29 @@ export default function LenisProvider({ children }: LenisProviderProps) {
         touchMultiplier: 1.5,
       });
 
-      function raf(time: number) {
-        lenisInstance?.raf(time);
-        requestAnimationFrame(raf);
-      }
+      instance.on("scroll", ScrollTrigger.update);
 
-      requestAnimationFrame(raf);
+      gsap.ticker.add((time: number) => {
+        instance.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+
+      return instance;
     }
 
-    init();
+    initLenis().then((instance) => {
+      lenisInstance = instance;
+    });
 
     return () => {
-      lenisInstance?.destroy();
+      if (lenisInstance) {
+        lenisInstance.destroy();
+      }
+      gsap.ticker.lagSmoothing(1);
     };
   }, []);
 
-  return <div ref={containerRef}>{children}</div>;
+  return children;
 }
+
+

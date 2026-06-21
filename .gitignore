@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# junk / temp
+.playwright-mcp/
+/97a4c2a0-6d73-11f1-a79a-4d01854585f4.webm
+/DESIGN.md
+/nav-and-solution.txt
+/nexflow-*.png
