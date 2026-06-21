@@ -1,0 +1,31 @@
+{
+  "name": "NexFlow",
+  "short_name": "NexFlow",
+  "description": "شريكك التقني لبناء المواقع والبوتات الذكية والأتمتة",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050B18",
+  "theme_color": "#00E5FF",
+  "icons": [
+    {
+      "src": "/brand/favicon-16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/nexflow-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

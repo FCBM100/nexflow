@@ -19,6 +19,17 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://nexflow.dev"),
   title: "NexFlow — Automate. Integrate. Elevate.",
+  icons: {
+    icon: [
+      { url: "/brand/favicon.ico", sizes: "any" },
+      { url: "/brand/favicon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/brand/favicon-32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/brand/apple-touch-icon.png", sizes: "180x180" },
+    ],
+  },
+  manifest: "/brand/site.webmanifest",
   description:
     "تفرّغ لتطوير مشروعك.. واترك إدارة بيجك وأعمالك للأنظمة الذكية! شريكك التقني لبناء المواقع والبوتات الذكية والأتمتة.",
   openGraph: {
