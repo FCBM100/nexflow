@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
+import LenisProvider from "@/lib/LenisProvider";
+import AppShell from "@/components/ui/AppShell";
 import "./globals.css";
 
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
@@ -66,7 +68,11 @@ export default function RootLayout({
       lang="ar"
       className={`${ibmPlexSansArabic.variable} ${inter.variable}`}
     >
-      <body className="font-arabic antialiased">{children}</body>
+      <body className="font-arabic antialiased">
+        <LenisProvider>
+          <AppShell>{children}</AppShell>
+        </LenisProvider>
+      </body>
     </html>
   );
 }
