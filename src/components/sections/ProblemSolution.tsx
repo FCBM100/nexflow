@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { GlassCard } from "@/components/ui/GlassCard";
 
 const problems = [
@@ -43,57 +45,33 @@ export default function ProblemSolution() {
   const cardsRef = useRef<HTMLDivElement>(null);
   const solutionRef = useRef<HTMLDivElement>(null);
 
-  const animateCards = useCallback(async () => {
-    if (!cardsRef.current) return;
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) return;
-
-    const gsap = (await import("gsap")).default;
-    if (!cardsRef.current) return;
-    const cards = cardsRef.current.querySelectorAll(".problem-card");
-
-    gsap.fromTo(
-      cards,
-      {
-        y: 60,
-        opacity: 0,
-        rotateX: 5,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        rotateX: 0,
-        duration: 0.7,
-        stagger: 0.12,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: "top 80%",
-          once: true,
+  function onReady1() {
+    const cards = cardsRef.current?.querySelectorAll(".problem-card");
+    if (cards?.length) {
+      gsap.fromTo(
+        cards,
+        { y: 60, opacity: 0, rotateX: 5 },
+        {
+          y: 0, opacity: 1, rotateX: 0,
+          duration: 0.7, stagger: 0.12, ease: "power3.out",
+          scrollTrigger: {
+            trigger: cardsRef.current,
+            start: "top 80%",
+            once: true,
+          },
         },
-      },
-    );
-  }, []);
+      );
+    }
+  }
 
-  useEffect(() => {
-    animateCards();
-  }, [animateCards]);
-
-  useEffect(() => {
-    if (!solutionRef.current) return;
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) return;
-
-    async function animateSolution() {
-      const gsap = (await import("gsap")).default;
+  function onReady2() {
+    if (solutionRef.current) {
       gsap.fromTo(
         solutionRef.current,
         { clipPath: "inset(0 100% 0 0)", opacity: 0 },
         {
-          clipPath: "inset(0 0% 0 0)",
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.inOut",
+          clipPath: "inset(0 0% 0 0)", opacity: 1,
+          duration: 0.8, ease: "power3.inOut",
           scrollTrigger: {
             trigger: solutionRef.current,
             start: "top 85%",
@@ -102,8 +80,20 @@ export default function ProblemSolution() {
         },
       );
     }
+  }
 
-    animateSolution();
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) return;
+    if (document.readyState === "complete") { onReady1(); return; }
+    window.addEventListener("load", onReady1, { once: true });
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) return;
+    if (document.readyState === "complete") { onReady2(); return; }
+    window.addEventListener("load", onReady2, { once: true });
   }, []);
 
   return (
@@ -113,16 +103,9 @@ export default function ProblemSolution() {
           هل تعاني من هذه المشاكل في مشروعك؟
         </h2>
 
-        <div
-          ref={cardsRef}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12"
-        >
+        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           {problems.map((p, i) => (
-            <div
-              key={i}
-              className="problem-card"
-              style={{ perspective: "1000px" }}
-            >
+            <div key={i} className="problem-card" style={{ perspective: "1000px" }}>
               <GlassCard gradientBorder tilt className="h-full group">
                 <div className="flex flex-col items-center text-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
@@ -163,10 +146,10 @@ export default function ProblemSolution() {
               ماذا أفعل؟
             </h3>
             <p className="text-body-lg text-white/80 leading-relaxed">
-ماذا أفعل أبني أنظمة أتمتة ذكية للمحلات التجارية، تتضمن بوتات
-تفاعلية لخدمة العملاء. من خلال هذه الأنظمة، أضمن لك رداً فورياً
-على زبائنك، وإمكانية تصفحهم لمنتجاتك لحظة بلحظة، مع إتمام عمليات
-الحجز وتحديث البيانات تلقائياً وبدون تدخل يدوي
+              ماذا أفعل أبني أنظمة أتمتة ذكية للمحلات التجارية، تتضمن بوتات
+              تفاعلية لخدمة العملاء. من خلال هذه الأنظمة، أضمن لك رداً فورياً
+              على زبائنك، وإمكانية تصفحهم لمنتجاتك لحظة بلحظة، مع إتمام عمليات
+              الحجز وتحديث البيانات تلقائياً وبدون تدخل يدوي
             </p>
           </div>
         </div>

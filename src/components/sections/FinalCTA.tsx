@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MagneticWrapper } from "@/components/ui/MagneticWrapper";
 import { Button } from "@/components/ui/Button";
 
@@ -12,72 +14,65 @@ export default function FinalCTA() {
   const btnRef = useRef<HTMLDivElement>(null);
   const mockupRef = useRef<HTMLDivElement>(null);
 
-  const animate = useCallback(async () => {
+  useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mq.matches) return;
 
-    const gsap = (await import("gsap")).default;
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top 85%",
-        once: true,
-      },
-    });
+    function init() {
+      if (!sectionRef.current) return;
 
-    // Background mesh: radial wipe from center
-    tl.fromTo(
-      meshRef.current,
-      { clipPath: "circle(0% at 50% 50%)", opacity: 0 },
-      { clipPath: "circle(120% at 50% 50%)", opacity: 1, duration: 1.2, ease: "power3.inOut" },
-    );
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 85%",
+          once: true,
+        },
+      });
 
-    // Title: staggered word reveal
-    const titleWords = titleRef.current?.querySelectorAll(".word");
-    if (titleWords?.length) {
       tl.fromTo(
-        titleWords,
-        { x: 40, opacity: 0, filter: "blur(6px)" },
-        { x: 0, opacity: 1, filter: "blur(0px)", duration: 0.6, stagger: 0.06, ease: "power3.out" },
-        "-=0.6",
+        meshRef.current,
+        { clipPath: "circle(0% at 50% 50%)", opacity: 0 },
+        { clipPath: "circle(120% at 50% 50%)", opacity: 1, duration: 1.2, ease: "power3.inOut" },
+      );
+
+      const titleWords = titleRef.current?.querySelectorAll(".word");
+      if (titleWords?.length) {
+        tl.fromTo(
+          titleWords,
+          { x: 40, opacity: 0, filter: "blur(6px)" },
+          { x: 0, opacity: 1, filter: "blur(0px)", duration: 0.6, stagger: 0.06, ease: "power3.out" },
+          "-=0.6",
+        );
+      }
+
+      tl.fromTo(
+        mockupRef.current,
+        { y: 30, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" },
+        "-=0.3",
+      );
+
+      tl.fromTo(
+        descRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+        "-=0.3",
+      );
+
+      tl.fromTo(
+        btnRef.current,
+        { scale: 0.6, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.7)" },
+        "-=0.2",
       );
     }
 
-    // Bot mockup
-    tl.fromTo(
-      mockupRef.current,
-      { y: 30, opacity: 0, scale: 0.95 },
-      { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" },
-      "-=0.3",
-    );
-
-    // Description
-    tl.fromTo(
-      descRef.current,
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-      "-=0.3",
-    );
-
-    // Button: spring scale-in
-    tl.fromTo(
-      btnRef.current,
-      { scale: 0.6, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.7)" },
-      "-=0.2",
-    );
+    if (document.readyState === "complete") { init(); return; }
+    window.addEventListener("load", init, { once: true });
   }, []);
 
-  useEffect(() => {
-    animate();
-  }, [animate]);
-
   return (
-    <section
-      ref={sectionRef}
-      className="section-padding relative overflow-hidden"
-      id="contact"
-    >
+    <section ref={sectionRef} className="section-padding relative overflow-hidden" id="contact">
       {/* Ambient gradient mesh background — radial wipe reveal */}
       <div
         ref={meshRef}
@@ -94,25 +89,16 @@ export default function FinalCTA() {
       />
 
       <div className="container-narrow relative z-10 flex flex-col items-center text-center">
-        <h2
-          ref={titleRef}
-          className="text-display-xl gradient-text font-bold max-w-[800px] text-balance"
-        >
+        <h2 ref={titleRef} className="text-display-xl gradient-text font-bold max-w-[800px] text-balance">
           {"جاهز لتبني موقعك وتنقل مشروعك للمستوى القادم؟"
             .split(" ")
             .map((word, i) => (
-              <span key={i} className="word inline-block ms-[0.15em]">
-                {word}
-              </span>
+              <span key={i} className="word inline-block ms-[0.15em]">{word}</span>
             ))}
         </h2>
 
-        {/* Telegram Bot Preview — calm & beautiful */}
-        <div
-          ref={mockupRef}
-          className="mt-10 w-full max-w-sm mx-auto"
-          style={{ opacity: 0 }}
-        >
+        {/* Telegram Bot Preview */}
+        <div ref={mockupRef} className="mt-10 w-full max-w-sm mx-auto" style={{ opacity: 0 }}>
           <div className="glass-card p-5 text-right">
             <div className="flex items-center gap-3 pb-3 border-b border-white/5 mb-3">
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
@@ -129,56 +115,31 @@ export default function FinalCTA() {
             <div className="space-y-2.5">
               <div className="flex justify-start">
                 <div className="bg-surface/60 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%]">
-                  <p className="text-sm text-body/80 leading-relaxed">
-                    أهلاً بك. راسلني وأخبرني عن مشروعك، وسأعود إليك قريباً
-                    لنبدأ معاً.
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <div className="bg-primary/10 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%]">
-                  <p className="text-sm text-white/90 leading-relaxed">
-                    عندي محل وأبغى بوت يحجز مواعيد ويرد على الزبائن. كم تكلفة؟
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-start">
-                <div className="bg-surface/60 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%]">
-                  <p className="text-sm text-body/80 leading-relaxed">
-                    يسعدني مساعدتك. دعنا نناقش التفاصيل ونضع خطة مناسبة لك
-                    ولعملك.
-                  </p>
-                  <p className="text-xs text-primary/40 mt-1">✓ أنا موجود</p>
+                  <p className="text-sm text-body/80 leading-relaxed">أهلاً بك. راسلني وأخبرني عن مشروعك، وسأعود إليك قريباً</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <p
-          ref={descRef}
-          className="text-body text-body max-w-[650px] mt-6 leading-relaxed"
-          style={{ opacity: 0 }}
-        >
-          اترك رسالة هادئة على تليغرام وسأعود إليك لأفهم مشروعك تماماً وأقدم لك
-          أفضل حل يناسبك.
+        <p ref={descRef} className="text-body-lg text-body max-w-[600px] mt-6 text-balance leading-[1.7]">
+          تواصل معي الآن عبر تليغرام، وأخبرني عن مشروعك، وسأضع خطة عملية مناسبة لك.
         </p>
 
-        <div ref={btnRef} className="mt-8" style={{ opacity: 0 }}>
+        <div ref={btnRef} className="mt-8">
           <MagneticWrapper strength={0.3}>
             <Button
               variant="primary"
               size="xl"
-              className="text-base px-8 py-4 h-auto"
-              onClick={() =>
-                window.open("https://t.me/FGGHJ74", "_blank")
-              }
+              onClick={() => window.open("https://t.me/FGGHJ74", "_blank")}
             >
               <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 2 11 13" />
-                <path d="M22 2 15 22 11 13 2 9 22 2" />
+                <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+                <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+                <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+                <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
               </svg>
-              تواصل معي على تليغرام
+              تواصل معي الآن
             </Button>
           </MagneticWrapper>
         </div>

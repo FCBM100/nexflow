@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -19,15 +19,19 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [entered, setEntered] = useState(false);
-  const initialized = useRef(false);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 });
 
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
-    setTimeout(() => setEntered(true), 2200);
+    function onReady() {
+      setEntered(true);
+    }
+    if (document.readyState === "complete") {
+      onReady();
+    } else {
+      window.addEventListener("load", onReady, { once: true });
+    }
   }, []);
 
   useEffect(() => {

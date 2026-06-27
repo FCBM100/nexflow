@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { GlassCard } from "@/components/ui/GlassCard";
 
 const services = [
@@ -49,72 +51,60 @@ const services = [
 ];
 
 export default function Services() {
-  const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
-  const animate = useCallback(async () => {
-    if (!cardsRef.current) return;
+  useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mq.matches) return;
 
-    const gsap = (await import("gsap")).default;
-    if (!cardsRef.current) return;
-    const cards = cardsRef.current.querySelectorAll(".service-card");
+    function init() {
+      const cards = cardsRef.current?.querySelectorAll(".service-card");
+      if (cards?.length) {
+        gsap.fromTo(
+          cards,
+          { y: 60, opacity: 0, rotateX: 15, transformPerspective: 800 },
+          {
+            y: 0, opacity: 1, rotateX: 0,
+            duration: 0.8, stagger: 0.12, ease: "power3.out",
+            scrollTrigger: {
+              trigger: cardsRef.current,
+              start: "top 80%",
+              once: true,
+            },
+          },
+        );
+      }
 
-    // Cards rise from below with a 3D rotateX lift — distinct from ProblemSolution's y+rotateX
-    gsap.fromTo(
-      cards,
-      { y: 60, opacity: 0, rotateX: 15, transformPerspective: 800 },
-      {
-        y: 0,
-        opacity: 1,
-        rotateX: 0,
-        duration: 0.8,
-        stagger: 0.12,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: "top 80%",
-          once: true,
-        },
-      },
-    );
+      const icons = cardsRef.current?.querySelectorAll(".service-icon");
+      if (icons?.length) {
+        gsap.fromTo(
+          icons,
+          { scale: 0, rotate: -30 },
+          {
+            scale: 1, rotate: 0,
+            duration: 0.6, stagger: 0.15, ease: "back.out(2.5)",
+            scrollTrigger: {
+              trigger: cardsRef.current,
+              start: "top 75%",
+              once: true,
+            },
+          },
+        );
+      }
+    }
 
-    // Icons: bounce in with neon glow
-    const icons = cardsRef.current.querySelectorAll(".service-icon");
-    gsap.fromTo(
-      icons,
-      { scale: 0, rotate: -30 },
-      {
-        scale: 1,
-        rotate: 0,
-        duration: 0.6,
-        stagger: 0.15,
-        ease: "back.out(2.5)",
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: "top 75%",
-          once: true,
-        },
-      },
-    );
+    if (document.readyState === "complete") { init(); return; }
+    window.addEventListener("load", init, { once: true });
   }, []);
 
-  useEffect(() => {
-    animate();
-  }, [animate]);
-
   return (
-    <section ref={sectionRef} className="section-padding" id="services">
+    <section className="section-padding" id="services">
       <div className="container-narrow">
         <h2 className="text-display-xl font-bold text-white text-center mb-4">
           كيف أساعد مشروعك على النمو؟
         </h2>
 
-        <div
-          ref={cardsRef}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12"
-        >
+        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           {services.map((s, i) => (
             <GlassCard key={i} tilt className="service-card group">
               <div className="flex flex-col gap-4">

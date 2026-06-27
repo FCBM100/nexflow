@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -11,11 +11,17 @@ interface LenisProviderProps {
 }
 
 export default function LenisProvider({ children }: LenisProviderProps) {
-  useEffect(() => {
-    let lenisInstance: { destroy: () => void } | null = null;
+  const inited = useRef(false);
 
-    async function initLenis() {
-      const Lenis = (await import("lenis")).default;
+  useEffect(() => {
+    if (inited.current) return;
+
+    let destroy: (() => void) | null = null;
+    let cancelled = false;
+
+    async function init() {
+      const { default: Lenis } = await import("lenis");
+      if (cancelled) return;
 
       const instance = new Lenis({
         duration: 1.2,
@@ -24,32 +30,46 @@ export default function LenisProvider({ children }: LenisProviderProps) {
         gestureOrientation: "vertical",
         smoothWheel: true,
         wheelMultiplier: 1,
-        touchMultiplier: 1.5,
+        touchMultiplier: 1,
       });
 
       instance.on("scroll", ScrollTrigger.update);
 
-      gsap.ticker.add((time: number) => {
+      const tickerFn = (time: number) => {
         instance.raf(time * 1000);
-      });
+      };
+      gsap.ticker.add(tickerFn);
       gsap.ticker.lagSmoothing(0);
 
-      return instance;
+      destroy = () => {
+        gsap.ticker.remove(tickerFn);
+        instance.destroy();
+        gsap.ticker.lagSmoothing(1);
+      };
+
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+      });
     }
 
-    initLenis().then((instance) => {
-      lenisInstance = instance;
-    });
+    function start() {
+      if (inited.current) return;
+      inited.current = true;
+      init();
+    }
+
+    if (document.readyState === "complete") {
+      start();
+    } else {
+      window.addEventListener("load", start, { once: true });
+    }
 
     return () => {
-      if (lenisInstance) {
-        lenisInstance.destroy();
-      }
-      gsap.ticker.lagSmoothing(1);
+      cancelled = true;
+      destroy?.();
+      // If start() hasn't run yet, the { once: true } listener auto-removes on fire
     };
   }, []);
 
   return children;
 }
-
-

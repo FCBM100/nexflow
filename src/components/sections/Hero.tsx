@@ -1,14 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
+import gsap from "gsap";
 import { MagneticWrapper } from "@/components/ui/MagneticWrapper";
 import { Button } from "@/components/ui/Button";
-
-const NeuralNetwork = dynamic(
-  () => import("@/components/three/NeuralNetwork"),
-  { ssr: false },
-);
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -20,12 +15,7 @@ export default function Hero() {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mq.matches) return;
 
-    let cancelled = false;
-
-    async function animate() {
-      const gsap = (await import("gsap")).default;
-      if (cancelled) return;
-
+    function init() {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       const titleWords = titleRef.current?.querySelectorAll(".word");
@@ -52,11 +42,8 @@ export default function Hero() {
       );
     }
 
-    animate();
-
-    return () => {
-      cancelled = true;
-    };
+    if (document.readyState === "complete") { init(); return; }
+    window.addEventListener("load", init, { once: true });
   }, []);
 
   return (
@@ -64,18 +51,6 @@ export default function Hero() {
       ref={sectionRef}
       className="relative min-h-dvh flex items-center justify-center overflow-hidden section-padding pt-24 md:pt-28"
     >
-      <NeuralNetwork />
-
-      {/* Ambient glow */}
-      <div
-        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(0,229,255,0.04) 0%, transparent 60%)",
-        }}
-        aria-hidden="true"
-      />
-
       <div className="relative z-10 container-narrow flex flex-col items-center text-center">
         {/* Logo visual */}
         <div className="mb-8 md:mb-10 w-32 md:w-40">

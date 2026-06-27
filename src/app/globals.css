@@ -23,17 +23,13 @@
 }
 
 @layer base {
-  * {
-    scroll-behavior: smooth;
-  }
-
   html {
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
   }
 
   body {
-    background-color: var(--color-background);
+    background-color: #050B18;
     color: var(--color-body);
     overflow-x: hidden;
     font-family: var(--font-arabic);

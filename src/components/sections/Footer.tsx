@@ -1,45 +1,51 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export default function Footer() {
-  const year = new Date().getFullYear();
+  const [year, setYear] = useState(2025);
   const footerRef = useRef<HTMLElement>(null);
 
-  const animate = useCallback(async () => {
-    if (!footerRef.current) return;
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) return;
-
-    const gsap = (await import("gsap")).default;
-    if (!footerRef.current) return;
-    const cols = footerRef.current.querySelectorAll(".footer-col");
-    const copyright = footerRef.current.querySelector(".footer-copyright");
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: footerRef.current,
-        start: "top 90%",
-        once: true,
-      },
-    });
-
-    tl.fromTo(
-      cols,
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power3.out" },
-    ).fromTo(
-      copyright,
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" },
-      "-=0.2",
-    );
+  useEffect(() => {
+    setYear(new Date().getFullYear());
   }, []);
 
   useEffect(() => {
-    animate();
-  }, [animate]);
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) return;
+
+    function init() {
+      if (!footerRef.current) return;
+
+      const cols = footerRef.current.querySelectorAll(".footer-col");
+      const copyright = footerRef.current.querySelector(".footer-copyright");
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top 90%",
+          once: true,
+        },
+      });
+
+      tl.fromTo(
+        cols,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power3.out" },
+      ).fromTo(
+        copyright,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" },
+        "-=0.2",
+      );
+    }
+
+    if (document.readyState === "complete") { init(); return; }
+    window.addEventListener("load", init, { once: true });
+  }, []);
 
   const links = [
     { label: "الخدمات", href: "#services" },
@@ -86,13 +92,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="footer-col col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <Image
-                src="/brand/nexflow-icon.png"
-                alt="NexFlow"
-                width={32}
-                height={32}
-                className="w-8 h-8"
-              />
+              <Image src="/brand/nexflow-icon.png" alt="NexFlow" width={32} height={32} className="w-8 h-8" />
               <span className="text-white font-bold text-lg">NexFlow</span>
             </div>
             <p className="text-body-sm text-body/60 leading-relaxed max-w-xs">
@@ -102,18 +102,11 @@ export default function Footer() {
 
           {/* Quick links */}
           <div className="footer-col">
-            <h4 className="text-sm text-white font-semibold mb-4">
-              روابط سريعة
-            </h4>
+            <h4 className="text-sm text-white font-semibold mb-4">روابط سريعة</h4>
             <ul className="space-y-2">
               {links.map((l, i) => (
                 <li key={i}>
-                  <a
-                    href={l.href}
-                    className="text-body-sm text-body/60 hover:text-primary transition-colors"
-                  >
-                    {l.label}
-                  </a>
+                  <a href={l.href} className="text-body-sm text-body/60 hover:text-primary transition-colors">{l.label}</a>
                 </li>
               ))}
             </ul>
@@ -134,14 +127,9 @@ export default function Footer() {
             <h4 className="text-sm text-white font-semibold mb-4">تواصل</h4>
             <div className="flex gap-3">
               {socials.map((s, i) => (
-                <a
-                  key={i}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
                   className="w-10 h-10 rounded-xl bg-white/5 hover:bg-primary/20 text-body hover:text-primary flex items-center justify-center transition-all duration-300"
-                  aria-label={s.label}
-                >
+                  aria-label={s.label}>
                   {s.icon}
                 </a>
               ))}
@@ -151,12 +139,8 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="footer-copyright mt-10 pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-caption text-body/40">
-            © {year} NexFlow. جميع الحقوق محفوظة.
-          </p>
-          <p className="text-caption text-body/40 font-latin">
-            Automate. Integrate. Elevate.
-          </p>
+          <p className="text-caption text-body/40">© {year} NexFlow. جميع الحقوق محفوظة.</p>
+          <p className="text-caption text-body/40 font-latin">Automate. Integrate. Elevate.</p>
         </div>
       </div>
     </footer>

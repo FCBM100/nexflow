@@ -1,29 +1,24 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import LoadingScreen from "./LoadingScreen";
 import ErrorBoundary from "./ErrorBoundary";
 import Navbar from "./Navbar";
 import CursorGlow from "./CursorGlow";
 import FloatingOrbs from "./FloatingOrbs";
+import AuroraBackground from "@/components/three/AuroraBackground";
 
 interface AppShellProps {
   children: ReactNode;
 }
 
 export default function AppShell({ children }: AppShellProps) {
-  const [loading, setLoading] = useState(true);
-
   return (
     <>
-      {loading && <LoadingScreen onFinish={() => setLoading(false)} />}
-
+      <AuroraBackground />
+      <LoadingScreen />
       <FloatingOrbs />
-
-      <div
-        style={{ opacity: loading ? 0 : 1 }}
-        className="transition-opacity duration-500"
-      >
+      <div>
         <CursorGlow />
         <Navbar />
         <ErrorBoundary>

@@ -1,33 +1,51 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useState } from "react";
-import { useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 function AnimatedNumber({ to, suffix = "" }: { to: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true });
   const [displayed, setDisplayed] = useState(0);
 
   useEffect(() => {
-    if (!inView) return;
-    let start = 0;
-    const duration = 1200;
-    const step = 16;
-    const totalSteps = duration / step;
-    const increment = to / totalSteps;
+    const el = ref.current;
+    if (!el) return;
 
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= to) {
-        setDisplayed(to);
-        clearInterval(timer);
-      } else {
-        setDisplayed(Math.floor(start));
-      }
-    }, step);
+    let cleared = false;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || cleared) return;
+        cleared = true;
+        obs.disconnect();
 
-    return () => clearInterval(timer);
-  }, [inView, to]);
+        let start = 0;
+        const duration = 1200;
+        const step = 16;
+        const totalSteps = duration / step;
+        const increment = to / totalSteps;
+
+        timer = setInterval(() => {
+          start += increment;
+          if (start >= to) {
+            setDisplayed(to);
+            if (timer) clearInterval(timer);
+          } else {
+            setDisplayed(Math.floor(start));
+          }
+        }, step);
+      },
+      { threshold: 0.5 },
+    );
+
+    obs.observe(el);
+    return () => {
+      cleared = true;
+      obs.disconnect();
+      if (timer) clearInterval(timer);
+    };
+  }, [to]);
 
   return (
     <span ref={ref} className="font-latin">
@@ -89,37 +107,32 @@ const stats = [
 export default function Stats() {
   const sectionRef = useRef<HTMLElement>(null);
 
-  const animate = useCallback(async () => {
-    if (!sectionRef.current) return;
+  useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mq.matches) return;
 
-    const gsap = (await import("gsap")).default;
-    if (!sectionRef.current) return;
-    const badges = sectionRef.current.querySelectorAll(".stat-badge");
+    function init() {
+      const badges = sectionRef.current?.querySelectorAll(".stat-badge");
+      if (badges?.length) {
+        gsap.fromTo(
+          badges,
+          { scale: 0.8, opacity: 0, y: 20 },
+          {
+            scale: 1, opacity: 1, y: 0,
+            duration: 0.5, stagger: 0.15, ease: "back.out(1.7)",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 85%",
+              once: true,
+            },
+          },
+        );
+      }
+    }
 
-    gsap.fromTo(
-      badges,
-      { scale: 0.8, opacity: 0, y: 20 },
-      {
-        scale: 1,
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        stagger: 0.15,
-        ease: "back.out(1.7)",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 85%",
-          once: true,
-        },
-      },
-    );
+    if (document.readyState === "complete") { init(); return; }
+    window.addEventListener("load", init, { once: true });
   }, []);
-
-  useEffect(() => {
-    animate();
-  }, [animate]);
 
   return (
     <section ref={sectionRef} className="section-padding" id="stats">

@@ -1,93 +1,71 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 
-interface LoadingScreenProps {
-  onFinish: () => void;
-}
-
-export default function LoadingScreen({ onFinish }: LoadingScreenProps) {
+export default function LoadingScreen() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
-  const taglineRef = useRef<HTMLParagraphElement>(null);
-  const [visible, setVisible] = useState(true);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    async function run() {
-      try {
-        const gsapMod = await import("gsap");
-        const gsap = gsapMod.default;
+    if (!reduced) {
+      gsap.fromTo(
+        barRef.current,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 1.4, ease: "power3.inOut", transformOrigin: "right center" },
+      );
+      gsap.fromTo(
+        textRef.current,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out", delay: 0.2 },
+      );
+      gsap.fromTo(
+        subtitleRef.current,
+        { opacity: 0, y: 8 },
+        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out", delay: 0.5 },
+      );
+    }
 
-        if (!reduced) {
-          const tl = gsap.timeline();
-
-          tl.fromTo(
-            barRef.current,
-            { scaleX: 0 },
-            { scaleX: 1, duration: 2.2, ease: "power3.inOut", transformOrigin: "right center" }
-          );
-
-          tl.fromTo(
-            textRef.current,
-            { opacity: 0, y: 12 },
-            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
-            "0.3"
-          );
-
-          tl.fromTo(
-            taglineRef.current,
-            { opacity: 0, y: 8 },
-            { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
-            "-=0.2"
-          );
-
-          await new Promise((resolve) => setTimeout(resolve, 2400));
-
-          gsap.to(overlayRef.current, {
-            opacity: 0,
-            scale: 1.05,
-            duration: 0.6,
-            ease: "power3.inOut",
-            onComplete: () => {
-              setVisible(false);
-              onFinish();
-            },
-          });
-        } else {
-          await new Promise((resolve) => setTimeout(resolve, 2200));
-          setVisible(false);
-          onFinish();
-        }
-      } catch {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        setVisible(false);
-        onFinish();
+    function fadeOut() {
+      if (!reduced) {
+        gsap.to(overlayRef.current, {
+          opacity: 0,
+          duration: 0.4,
+          ease: "power3.inOut",
+          onComplete: () => setHidden(true),
+        });
+      } else {
+        setHidden(true);
       }
     }
 
-    run();
-  }, [onFinish]);
+    if (document.readyState === "complete") {
+      fadeOut();
+    } else {
+      window.addEventListener("load", fadeOut, { once: true });
+    }
+  }, []);
 
-  if (!visible) return null;
+  if (hidden) return null;
 
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-[#050B18]"
+      className="fixed inset-0 z-[100] flex items-center justify-center"
+      style={{ backgroundColor: '#050B18' }}
     >
       <div className="flex flex-col items-center gap-8">
-        <video
-          autoPlay
-          muted
-          playsInline
-          poster="/brand/logo-poster.jpg"
+        <img
+          src="/brand/logo-poster.jpg"
+          alt="NexFlow"
           className="w-48 h-48 md:w-64 md:h-64 object-contain"
-        >
-          <source src="/brand/logo-animation.webm" type="video/webm" />
-        </video>
+          loading="eager"
+        />
 
         <div className="flex flex-col items-center gap-3">
           <div className="w-32 md:w-40 h-0.5 bg-white/5 rounded-full overflow-hidden">
@@ -104,8 +82,9 @@ export default function LoadingScreen({ onFinish }: LoadingScreenProps) {
           </div>
 
           <p
-            ref={taglineRef}
-            className="opacity-0 font-latin text-[10px] text-primary/50 tracking-[0.08em]"
+            ref={subtitleRef}
+            className="font-latin text-[10px] text-primary/50 tracking-[0.08em]"
+            style={{ opacity: 0 }}
           >
             Automate. Integrate. Elevate.
           </p>

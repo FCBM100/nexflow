@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface OrbData {
   x: string;
@@ -22,23 +22,16 @@ const ORBS: OrbData[] = [
 ];
 
 export default function FloatingOrbs() {
-  const [reduced] = useState(() =>
-    typeof window !== "undefined"
-      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      : false
-  );
-
   const orbRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const positionsRef = useRef<{ x: number; y: number }[]>(
-    ORBS.map(() => ({ x: 0, y: 0 }))
-  );
+  const positionsRef = useRef(ORBS.map(() => ({ x: 0, y: 0 })));
   const directionsRef = useRef(ORBS.map((o) => ({ dx: o.dx, dy: o.dy })));
   const rafRef = useRef(0);
   const runningRef = useRef(true);
-  const resizeTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
-    if (reduced) return;
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if ("ontouchstart" in window || navigator.maxTouchPoints > 0) return;
 
     const positions = positionsRef.current;
     const directions = directionsRef.current;
@@ -113,25 +106,10 @@ export default function FloatingOrbs() {
 
     function onBlur() { pause(); }
     function onFocus() { resume(); }
-    function onPageHide() { pause(); }
-    function onPageShow() { resume(); }
-
-    function onResize() {
-      pause();
-      clearTimeout(resizeTimerRef.current);
-      resizeTimerRef.current = setTimeout(() => {
-        hardReset();
-        runningRef.current = true;
-        rafRef.current = requestAnimationFrame(animate);
-      }, 200);
-    }
 
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("blur", onBlur);
     window.addEventListener("focus", onFocus);
-    window.addEventListener("pagehide", onPageHide);
-    window.addEventListener("pageshow", onPageShow);
-    window.addEventListener("resize", onResize);
 
     lastTime = performance.now();
     rafRef.current = requestAnimationFrame(animate);
@@ -141,15 +119,8 @@ export default function FloatingOrbs() {
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("blur", onBlur);
       window.removeEventListener("focus", onFocus);
-      window.removeEventListener("pagehide", onPageHide);
-      window.removeEventListener("pageshow", onPageShow);
-      window.removeEventListener("resize", onResize);
-      clearTimeout(resizeTimerRef.current);
-      resizeTimerRef.current = undefined;
     };
-  }, [reduced]);
-
-  if (reduced) return null;
+  }, []);
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">

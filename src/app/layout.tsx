@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import LenisProvider from "@/lib/LenisProvider";
 import AppShell from "@/components/ui/AppShell";
@@ -17,6 +17,10 @@ const inter = Inter({
   variable: "--font-latin",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  themeColor: "#050B18",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nexflow.dev"),
