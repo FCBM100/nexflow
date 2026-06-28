@@ -39,7 +39,7 @@ function GlassCard({
     <Tag
       ref={cardRef}
       className={cn(
-        "glass-card p-6 md:p-8",
+        "glass-card p-5",
         glow && "neon-glow-sm",
         gradientBorder && "gradient-border",
         tilt && "cursor-pointer will-change-transform",

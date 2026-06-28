@@ -137,7 +137,7 @@ export default function Stats() {
   return (
     <section ref={sectionRef} className="section-padding" id="stats">
       <div className="container-narrow">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="flex flex-col gap-4">
           {stats.map((s, i) => (
             <div
               key={i}

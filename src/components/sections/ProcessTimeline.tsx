@@ -87,42 +87,8 @@ export default function ProcessTimeline() {
           رحلة متكاملة من الفكرة إلى الإطلاق
         </p>
 
-        {/* Desktop: horizontal */}
-        <div className="hidden md:block relative">
-          {/* Connector line */}
-          <div
-            ref={connectorRef}
-            className="absolute top-8 right-0 left-0 h-0.5 origin-right"
-            style={{
-              background:
-                "linear-gradient(to left, rgba(0,229,255,0.4), rgba(0,229,255,0.05))",
-            }}
-          />
-          {/* Traveling glow dot */}
-          <div
-            ref={glowDotRef}
-            className="absolute top-6 right-0 w-1 h-1 rounded-full pointer-events-none"
-            style={{
-              background: "#00E5FF",
-              boxShadow: "0 0 8px #00E5FF, 0 0 16px #00E5FF",
-            }}
-          />
-
-          <div className="grid grid-cols-5 gap-6 relative">
-            {steps.map((s, i) => (
-              <div key={i} className="step-node flex flex-col items-center text-center group">
-                <div className="relative z-10 w-16 h-16 rounded-full bg-surface border border-primary/20 flex items-center justify-center mb-4 group-hover:border-primary/50 transition-colors">
-                  <span className="text-lg font-bold text-primary font-latin">{s.num}</span>
-                </div>
-                <h3 className="text-heading-sm font-semibold text-white mb-2">{s.title}</h3>
-                <p className="text-body-sm text-body/70">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Mobile: vertical */}
-        <div className="md:hidden relative">
+        {/* Vertical timeline */}
+        <div className="relative">
           <div className="absolute top-0 bottom-0 right-[23px] w-0.5"
             style={{
               background:
