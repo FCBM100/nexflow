@@ -122,7 +122,7 @@ export default function FinalCTA() {
           </div>
         </div>
 
-        <p ref={descRef} className="text-body text-body max-w-[600px] mt-5 text-balance leading-[1.7]">
+        <p ref={descRef} className="text-body-lg text-body max-w-[600px] mt-6 text-balance leading-[1.7]">
           تواصل معي الآن عبر تليغرام، وأخبرني عن مشروعك، وسأضع خطة عملية مناسبة لك.
         </p>
 

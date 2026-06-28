@@ -66,9 +66,9 @@ export default function CaseStudy() {
           نظام مبيعات وحجز مؤتمت بالكامل
         </h2>
 
-        <div className="flex flex-col gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left — Text */}
-          <div ref={leftRef} className="space-y-6">
+          <div ref={leftRef} className="lg:col-span-5 space-y-6">
             <p className="text-body text-body leading-relaxed">
               ماذا أفعل أبني أنظمة أتمتة ذكية للمحلات التجارية، تتضمن بوتات
               تفاعلية لخدمة العملاء. من خلال هذه الأنظمة، أضمن لك رداً فورياً
@@ -92,8 +92,8 @@ export default function CaseStudy() {
           </div>
 
           {/* Right — Chat/Screen Mockup */}
-          <div ref={rightRef} className="relative">
-            <div className="glass-card p-5 mx-auto">
+          <div ref={rightRef} className="lg:col-span-7 relative">
+            <div className="glass-card p-6 md:p-8 max-w-md mx-auto">
               {/* Chat header */}
               <div className="flex items-center gap-3 pb-4 border-b border-white/5 mb-4">
                 <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-semibold">

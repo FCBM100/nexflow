@@ -49,11 +49,11 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-dvh flex items-center justify-center overflow-hidden section-padding pt-20"
+      className="relative min-h-dvh flex items-center justify-center overflow-hidden section-padding pt-24 md:pt-28"
     >
       <div className="relative z-10 container-narrow flex flex-col items-center text-center">
         {/* Logo visual */}
-        <div className="mb-6 w-28">
+        <div className="mb-8 md:mb-10 w-32 md:w-40">
           <video
             autoPlay
             muted
@@ -83,7 +83,7 @@ export default function Hero() {
         {/* Subtitle */}
         <p
           ref={subtitleRef}
-          className="text-body text-body max-w-[680px] mt-4 text-balance leading-[1.7]"
+          className="text-body-lg text-body max-w-[680px] mt-6 md:mt-8 text-balance leading-[1.7]"
         >
           أنا شريكك التقني. أساعد أصحاب البيجات، المحلات، والشركات الناشئة في
           بناء مواقع إلكترونية سريعة واحترافية، وتصميم بوتات ذكية تُدير حجزك
@@ -94,7 +94,7 @@ export default function Hero() {
         {/* Buttons */}
         <div
           ref={buttonsRef}
-          className="flex flex-col items-center gap-3 mt-6"
+          className="flex flex-col sm:flex-row items-center gap-4 mt-8 md:mt-10"
         >
           <MagneticWrapper strength={0.3}>
             <Button

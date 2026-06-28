@@ -103,7 +103,7 @@ export default function ProblemSolution() {
           هل تعاني من هذه المشاكل في مشروعك؟
         </h2>
 
-        <div ref={cardsRef} className="flex flex-col gap-5 mt-8">
+        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           {problems.map((p, i) => (
             <div key={i} className="problem-card" style={{ perspective: "1000px" }}>
               <GlassCard gradientBorder tilt className="h-full group">
@@ -127,7 +127,7 @@ export default function ProblemSolution() {
         <div
           id="maza-af3al"
           ref={solutionRef}
-          className="mt-12 p-6 rounded-[var(--radius-card)] text-center relative overflow-hidden"
+          className="mt-16 md:mt-20 p-8 md:p-10 rounded-[var(--radius-card)] text-center relative overflow-hidden"
           style={{
             background:
               "linear-gradient(135deg, rgba(0,229,255,0.06) 0%, rgba(0,153,255,0.04) 50%, transparent 100%)",

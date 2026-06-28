@@ -87,10 +87,10 @@ export default function Footer() {
 
   return (
     <footer ref={footerRef} className="border-t border-white/5">
-      <div className="container-narrow px-4 py-10">
-        <div className="flex flex-col gap-8">
+      <div className="container-narrow px-4 py-12 md:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
-          <div className="footer-col">
+          <div className="footer-col col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <Image src="/brand/nexflow-icon.png" alt="NexFlow" width={32} height={32} className="w-8 h-8" />
               <span className="text-white font-bold text-lg">NexFlow</span>
@@ -138,7 +138,7 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="footer-copyright mt-8 pt-6 border-t border-white/5 flex flex-col items-center justify-between gap-3">
+        <div className="footer-copyright mt-10 pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-caption text-body/40">© {year} NexFlow. جميع الحقوق محفوظة.</p>
           <p className="text-caption text-body/40 font-latin">Automate. Integrate. Elevate.</p>
         </div>

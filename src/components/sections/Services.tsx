@@ -100,11 +100,11 @@ export default function Services() {
   return (
     <section className="section-padding" id="services">
       <div className="container-narrow">
-        <h2 className="text-display-lg font-bold text-white text-center mb-3">
+        <h2 className="text-display-xl font-bold text-white text-center mb-4">
           كيف أساعد مشروعك على النمو؟
         </h2>
 
-        <div ref={cardsRef} className="flex flex-col gap-4 mt-6">
+        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           {services.map((s, i) => (
             <GlassCard key={i} tilt className="service-card group">
               <div className="flex flex-col gap-4">
