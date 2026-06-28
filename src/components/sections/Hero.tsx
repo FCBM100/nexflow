@@ -69,7 +69,7 @@ export default function Hero() {
         {/* Headline */}
         <h1
           ref={titleRef}
-          className="text-display-2xl font-bold text-white max-w-[900px] text-balance leading-[1.1]"
+          className="text-display-lg md:text-display-2xl font-bold text-white max-w-[900px] text-balance leading-[1.1]"
         >
           {"تفرّغ لتطوير مشروعك.. واترك إدارة بيجك وأعمالك للأنظمة الذكية!"
             .split(" ")

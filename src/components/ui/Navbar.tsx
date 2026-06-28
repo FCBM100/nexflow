@@ -161,7 +161,7 @@ export default function Navbar() {
         animate={entered ? { opacity: 1, rotate: 0 } : {}}
         transition={{ duration: 0.4, delay: 0.5 }}
         onClick={() => setMenuOpen(!menuOpen)}
-        className="md:hidden relative size-10 flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors"
+        className="md:hidden relative size-11 touch-target flex items-center justify-center rounded-lg hover:bg-white/5 active:bg-white/10 transition-colors"
         aria-label="Toggle menu"
       >
         <div className="flex flex-col gap-1.5">
@@ -197,8 +197,9 @@ export default function Navbar() {
       }}
       transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
       className="md:hidden fixed inset-x-0 top-16 bottom-0 bg-background/95 backdrop-blur-xl"
+      onClick={() => setMenuOpen(false)}
     >
-      <div className="flex flex-col items-center justify-center h-full gap-8 px-6">
+      <div className="flex flex-col items-center justify-center h-full gap-8 px-6" onClick={(e) => e.stopPropagation()}>
         {navLinks.map((link, i) => (
           <motion.a
             key={link.href}
@@ -222,6 +223,7 @@ export default function Navbar() {
             variant="primary"
             size="lg"
             className="mt-4 w-full"
+            onClick={() => window.open("https://t.me/FGGHJ74", "_blank")}
           >
             تواصل عبر تليغرام
           </Button>

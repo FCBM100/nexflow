@@ -26,6 +26,8 @@
   html {
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
   }
 
   body {
@@ -33,6 +35,9 @@
     color: var(--color-body);
     overflow-x: hidden;
     font-family: var(--font-arabic);
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   ::selection {
@@ -43,6 +48,18 @@
   :focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input,
+  textarea,
+  button,
+  select,
+  a {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -135,8 +152,14 @@
   }
 
   .section-padding {
-    padding-block: 80px;
+    padding-block: 60px;
     padding-inline: 16px;
+  }
+
+  @media (width >= 480px) {
+    .section-padding {
+      padding-block: 80px;
+    }
   }
 
   @media (width >= 768px) {
@@ -149,6 +172,10 @@
   .container-narrow {
     max-width: 1200px;
     margin-inline: auto;
+  }
+
+  .safe-area-bottom {
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
   }
 
   .noise-overlay {
@@ -165,6 +192,29 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-size: 256px 256px;
+  }
+
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .hover-only {
+      display: none !important;
+    }
+
+    .glass-card {
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:active {
+      border-color: rgba(0, 229, 255, 0.4);
+    }
+
+    a, button, [role="button"] {
+      cursor: default;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
