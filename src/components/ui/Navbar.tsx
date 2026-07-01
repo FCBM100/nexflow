@@ -74,7 +74,8 @@ export default function Navbar() {
   }, [menuOpen]);
 
   return (
-    <motion.header
+    <>
+      <motion.header
       initial={{ y: -80 }}
       animate={entered ? { y: 0 } : {}}
       transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -187,8 +188,14 @@ export default function Navbar() {
       </motion.button>
     </nav>
 
-    {/* Mobile Menu */}
+    {/* Scroll Progress Bar */}
     <motion.div
+      className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary/60 origin-left"
+      style={{ scaleX }}
+    />
+      </motion.header>
+
+      <motion.div
       initial={false}
       animate={menuOpen ? "open" : "closed"}
       variants={{
@@ -196,7 +203,7 @@ export default function Navbar() {
         closed: { opacity: 0, pointerEvents: "none" as const },
       }}
       transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="md:hidden fixed inset-x-0 top-16 bottom-0 bg-background/95 backdrop-blur-xl"
+      className="md:hidden fixed inset-x-0 top-16 bottom-0 bg-background/95 backdrop-blur-xl z-50"
       onClick={() => setMenuOpen(false)}
     >
       <div className="flex flex-col items-center justify-center h-full gap-8 px-6" onClick={(e) => e.stopPropagation()}>
@@ -229,13 +236,7 @@ export default function Navbar() {
           </Button>
         </motion.div>
       </div>
-    </motion.div>
-
-    {/* Scroll Progress Bar */}
-    <motion.div
-      className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary/60 origin-left"
-      style={{ scaleX }}
-    />
-  </motion.header>
+      </motion.div>
+    </>
   );
 }
